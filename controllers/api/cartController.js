@@ -37,11 +37,14 @@ const updateCart = async (req, res) => {
     if(!product) return res.status(400).json({"message": `Product ID ${req.body.id} not found!`});
     const { quantity, delivery_option } = req.body;
 
-    if(quantity) {
+    if(quantity && delivery_option) {
+      await Cart.updateOne({_id: product.id}, {$set: {quantity: req.body.quantity, delivery_option: req.body.delivery_option }}) 
+    } else if(quantity) {
       await Cart.updateOne({_id: product.id}, {$set: {quantity: req.body.quantity }});
     } else if (delivery_option) {
       await Cart.updateOne({_id: product.id}, {$set: {delivery_option: req.body.delivery_option }});
     }
+
     res.status(200).json({"message": "updated successfuly"});
   } catch (error) {
     res.status(500).json({"message": error.message});
@@ -50,7 +53,7 @@ const updateCart = async (req, res) => {
 
 const removeFromCart = async (req, res) => {
   try {
-    const product = await Cart.findOne({_id: req.body.id});
+    const product = await Cart.findOne({_id: req.body.id}).exec();
     if(!product) return res.status(400).json({"message": `Product ID ${req.body.id} not found!`});
     await Cart.deleteOne({_id: product.id});
     res.sendStatus(200);

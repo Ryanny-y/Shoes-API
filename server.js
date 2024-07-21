@@ -22,6 +22,7 @@ app.use(express.json());
 app.use('/', require('./routes/root'));
 app.use('/products', require('./routes/api/products'));
 app.use('/cart', require('./routes/api/cart'));
+app.use('/wishlist', require('./routes/api/wishlist'));
 
 app.all('*', (req,res) => {
   res.status(404);
